@@ -1,3 +1,4 @@
+/*¿Ä¨é­t¤ô¦ì*/
 #include <iostream>
 #include <fstream>
 #include <sstream>
