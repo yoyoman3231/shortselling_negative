@@ -887,7 +887,7 @@ void test_out_file(int a)
 {
 	if (test_trend_ratio != 0)
 	{
-		string ouput_file = "Larry_result_" + H2M_test[a].substr(0, H2M_test[a].length());//輸出檔案名稱
+		string ouput_file = "Larry_result_" + M2M_test[a].substr(0, M2M_test[a].length());//輸出檔案名稱
 		output_file.open(ouput_file, ios::app);//檔案輸出
 		output_file << "代數" << "," << generation << endl;//v
 		output_file << "粒子數" << "," << partical_num << endl;//v
