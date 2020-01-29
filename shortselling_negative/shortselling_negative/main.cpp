@@ -358,9 +358,9 @@ void  measure()
 				partical[i][j] = 1;
 			}
 			else partical[i][j] = 0;//隨機給0或1
-									/*if (j == 6 || j == 13 || j == 42)
-									partical[i][j] = 1;
-									else partical[i][j] = 0;*/
+			/*if (j == 6 || j == 13 || j == 42)
+			partical[i][j] = 1;
+			else partical[i][j] = 0;*/
 			if (partical[i][j] == 1)
 			{
 				stock_index[i][n[i]] = j;
@@ -392,7 +392,7 @@ void standardization()
 					buy_papper = share_money / one_of_price;//可買張數
 					all_buy_paper[j] = buy_papper;
 					all_remain_fund = share_money - one_of_price * buy_papper;//買完各股剩餘資金
-					real_all_remain_fund[j] = all_remain_fund;//把買完各股剩餘資金存入陣列中進行判斷
+					real_all_remain_fund[j] = all_remain_fund;//把買完各股剩餘資-金存入陣列中進行判斷
 					fee = all_stock[stock_index[i][j]][k] * buy_papper * 1.425;//手續費 v
 					n_fund_standardization[i][j][k] = share_money - fee;//資金水位 v
 				}
@@ -829,7 +829,7 @@ void out_file(int a)
 		output_file << "真實報酬" << "," << fixed << setprecision(15) << Gbest_yi - initial_fund << endl << endl;
 		output_file << "預期報酬" << "," << fixed << setprecision(15) << Gbest_expect_retutn << endl;
 		output_file << "風險" << "," << fixed << setprecision(15) << Gbest_daily_risk << endl;
-		output_file << "Gbest" << "," << fixed << setprecision(20) << Gbest_max << endl;
+		output_file << "Gbest" << "," << fixed << setprecision(25) << Gbest_max << endl;
 		output_file << "找到最佳解世代" << "," << best_generation << endl;
 		output_file << "找到最佳解實驗#" << "," << best_experimrentime << endl;
 		output_file << "找到最佳解次數" << "," << Gbest_num << endl << endl;
