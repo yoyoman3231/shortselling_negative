@@ -259,6 +259,10 @@ string QQ_test[] = { "test_2010_Q1(2009 Q1).csv" ,"test_2010_Q2(2009 Q1).csv", "
 string HH_test[] = { "test_2010_Q1-Q2(2009 Q1).csv", "test_2010_Q3-Q4(2009 Q1).csv", "test_2011_Q1-Q2(2010 Q1).csv", "test_2011_Q3-Q4(2010 Q1).csv", "test_2012_Q1-Q2(2011 Q1).csv", "test_2012_Q3-Q4(2011 Q1).csv", "test_2013_Q1-Q2(2012 Q1).csv", "test_2013_Q3-Q4(2012 Q1).csv", "test_2014_Q1-Q2(2013 Q1).csv", "test_2014_Q3-Q4(2013 Q1).csv", "test_2015_Q1-Q2(2014 Q1).csv", "test_2015_Q3-Q4(2014 Q1).csv", "test_2016_Q1-Q2(2015 Q1).csv", "test_2016_Q3-Q4(2015 Q1).csv", "test_2017_Q1-Q2(2016 Q1).csv", "test_2017_Q3-Q4(2016 Q1).csv" };
 /*測試期讀檔*/
 
+double all_beta[10000][50];
+int full_all_max_solution[10000][50];
+int full_all_min_solution[10000][50];
+
 void read_file(int a) {
 
 	input_file.open(H2M_train[a], ios::in);
@@ -706,6 +710,8 @@ void compare()
 	}
 }
 
+
+
 void experiment_compre() /*50次實驗Gbest比較,並找出Gbest的實驗數*/
 {
 	Gbest_max = all_max_tmp[0];
@@ -1024,6 +1030,25 @@ void all_testperiod_final_result()
 	output_file.close();
 }
 
+void beta_output()
+{
+	string ouput_file = "Larry_ H2M_train_02-07_beta_output.csv";//輸出檔案名稱
+	output_file.open(ouput_file, ios::app);
+
+	for (int t = 0; t < generation; t++)
+		{
+			output_file << "Gen" << t + 1 << endl;
+			for (int s = 0; s < s_stock_index; s++)
+			{
+				output_file << all_beta[t][s] << ",";
+			}
+			output_file << endl;
+		}
+	
+	output_file.close();
+	
+}
+
 int main()
 {
 	srand(114);
@@ -1043,6 +1068,34 @@ int main()
 					standardization();
 					fitness();
 					compare();
+					
+					if (j == 0)
+					{
+						for (int s = 0; s < s_stock_index; s++)
+						{
+							all_beta[t][s] = beta[s];
+							full_all_max_solution[t][s] = all_max_solution[s];
+							full_all_min_solution[t][s] = partical[min_fitness_tmp][s];
+						}
+						
+						string ouput_file = "Larry_H2M_train_2017_02-07_solution_output.csv";//輸出檔案名稱
+						output_file.open(ouput_file, ios::app);//檔案輸出
+						output_file << "Gen" << "," << t + 1 << endl;
+						output_file << "Gbest" << endl;
+						for (int s = 0; s < s_stock_index; s++)
+						{
+							output_file << full_all_max_solution[t][s] << ",";
+						}
+						output_file << endl;
+						output_file << "Worst" << endl;
+						for (int s = 0; s < s_stock_index; s++)
+						{
+							output_file << full_all_min_solution[t][s] << ",";
+						}
+						output_file << endl;
+						output_file.close();//解輸出
+					}
+					
 					for (int i = 0; i < partical_num; i++)
 					{
 						real_all_trend_ratio[j][t][i] = all_trend_ratio[i];
@@ -1078,16 +1131,7 @@ int main()
 			experiment_compre();
 			Gbest_num_find();
 			generation_compare();
-			if (j == best_experimrentime - 1)
-			{
-				//cout << fixed << setprecision(20) << real_all_trend_ratio[j][4096][Gbest_i] << endl;
-				//cout << best_generation << endl;
-				for (int s = 0; s < s_stock_index; s++)
-				{
-					//cout << real_partical[j][4096][s] << endl;
-					//cout << best_generation << endl;
-				}
-			}
+			//beta_output();//beta輸出
 			system("pause");
 			Gbest_stock_selection();
 			for (int s = 0; s < s_stock_index; s++)
