@@ -23,7 +23,7 @@ double partical[10][50];
 //initial
 
 int stock_index[10][50];//記錄每顆粒子(10)所選到的投資組合(50)
-						//choose
+//choose
 
 int train_stock_index[50];
 double initial_fund = 10000000; //初始資金
@@ -59,7 +59,7 @@ int test_buy_paper;
 double yi[10000][10000];//第i天真實資金水位
 double test_yi[1000];
 double all_final_yi[10000];//每一個粒子最後一天的yi
-						   //standardization
+//standardization
 
 double m1;
 int m2;
