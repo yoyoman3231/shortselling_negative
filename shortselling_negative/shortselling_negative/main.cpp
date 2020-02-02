@@ -107,13 +107,13 @@ double Gbest[50];
 double all_max_tmp[50];
 double Gbest_max;
 int best_experimrentime;
-int best_generation;
+int best_generation = 0;
 double real_all_trend_ratio[50][10000][10];
 double real_yi[50][10000][10];
 double Gbest_yi;
 int Gbest_num;//Gbest的出現次數
 int final_n[50][10000][10];//存最佳解檔數
-int Gbest_n;//Gbest選到的檔數
+int Gbest_n = 0;//Gbest選到的檔數
 int Gbest_i = 0;
 int selection_stock_no[10][50];
 int real_partical[50][10000][50];
@@ -352,12 +352,11 @@ void initial()
 
 void  measure()
 {
-	//cout << s_stock_index << endl;
 	for (int i = 0; i < partical_num; i++) {
 		n[i] = 0;//千萬不能刪
 		for (int j = 0; j < s_stock_index; j++) {
 			//partical[i][j] = 0;
-			random = rand() / 32767.0;
+			random = (double)rand() / RAND_MAX;
 			if (random < beta[j]) {
 				partical[i][j] = 1;
 			}
@@ -389,7 +388,6 @@ void standardization()
 			all_buy_paper[j] = 0;
 			real_all_remain_fund[j] = 0;
 			for (int k = 0; k < day; k++) {
-				n_fund_standardization[i][j][k] = 0;
 				if (k == 0)
 				{
 					one_of_price = all_stock[stock_index[i][j]][k] * 1000 + all_stock[stock_index[i][j]][k] * 1.425;//單張價格
@@ -625,18 +623,19 @@ void fitness()
 		}
 		risk[i] = sqrt(r1 / (day));//風險
 
-								   /*if (m[i] < 0)
-								   {
-								   trend_ratio = m[i] / risk[i];
-								   }
-								   else if (m[i] > 0)
-								   {
-								   trend_ratio = m[i] * risk[i];//趨勢值
-								   }*/
+		 /*if (m[i] < 0)
+			{
+				trend_ratio = m[i] / risk[i];
+			}
+		 else if (m[i] > 0)
+		 {
+			trend_ratio = m[i] * risk[i];//趨勢值
+		 }*/
 		trend_ratio = m[i] / risk[i];
 		all_trend_ratio[i] = trend_ratio;
+		cout << all_trend_ratio[i] << endl;
 	}
-
+	system("pause");
 }
 
 void compare()
@@ -649,6 +648,7 @@ void compare()
 		{
 			max_fitness = all_trend_ratio[i];
 			max_fitness_tmp = i;
+			
 		}
 	}
 	min_fitness = max_fitness;
@@ -680,7 +680,6 @@ void compare()
 			all_max_solution[k] = 0;
 		}
 	}
-
 	for (int k = 0; k < s_stock_index; k++) {
 		if (all_max_solution[k] == 0 && partical[min_fitness_tmp][k] == 1)
 		{
@@ -717,7 +716,7 @@ void experiment_compre() /*50次實驗Gbest比較,並找出Gbest的實驗數*/
 	Gbest_max = all_max_tmp[0];
 	for (int j = 0; j < experiment_time; j++)
 	{
-		if (Gbest_max <= all_max_tmp[j])
+		if (Gbest_max >= all_max_tmp[j])
 		{
 			Gbest_max = all_max_tmp[j];
 		}
@@ -757,37 +756,43 @@ void generation_compare()
 			{
 				if (Gbest_max == real_all_trend_ratio[j][t][i])
 				{
-					best_generation = t + 1;//最佳解世代數
-					Gbest_daily_risk = daily_risk[j][t][i];//最佳解風險
-					Gbest_expect_retutn = expect_m[j][t][i];//最佳解預期報酬
+					best_generation = t + 1;
+					cout << "最佳解世代:" << best_generation << endl;
+					Gbest_daily_risk = daily_risk[j][t][i];
+					Gbest_expect_retutn = expect_m[j][t][i];
 					Gbest_n = final_n[j][t][i];
+					cout << "風險:" << Gbest_daily_risk << endl;
+					cout << "預期報酬:" << Gbest_expect_retutn << endl;
+					cout << "檔數:" << Gbest_n << endl;
+					cout << compare_share_money[j][t][i] << endl;
 					Gbest_share_money = compare_share_money[j][t][i];
 					Gbest_i = i;
-					if (t == best_generation - 1)
+					cout << "粒子:" << Gbest_i << endl;
+					for (int k = 0; k < Gbest_n; k++)
 					{
-						if (i == Gbest_i)
+						Gbest_all_remain_fund[k] = 0;
+						Gbest_buy_paper[k] = compare_buy_paper[j][i][k];//可買張數
+						Gbest_all_remain_fund[k] = compare_remain_fund[j][k];
+						cout << fixed << setprecision(15) << Gbest_all_remain_fund[k] << endl;
+						for (int d = 0; d < day; d++)
 						{
-							for (int k = 0; k < Gbest_n; k++)
-							{
-								Gbest_all_remain_fund[k] = 0;
-								Gbest_buy_paper[k] = compare_buy_paper[j][i][k];//可買張數
-								Gbest_all_remain_fund[k] = compare_remain_fund[j][k];
-								for (int d = 0; d < day; d++)
-								{
-									Gbest_n_fund_standardization[k][d] = all_n_fund_standardization[j][k][d];
-								}
-							}
-							for (int d = 0; d < day; d++)
-							{
-								real_total_yi[d] = compare_total_yi[j][d];
-								Gbest_yi = real_total_yi[day - 1];
-							}
+							Gbest_n_fund_standardization[k][d] = all_n_fund_standardization[j][k][d];
 						}
 					}
+					for (int d = 0; d < day; d++)
+					{
+						real_total_yi[d] = compare_total_yi[j][d];
+						Gbest_yi = real_total_yi[day - 1];
+					}
+					cout << "真實資金水位:" << fixed << setprecision(10) << Gbest_yi << endl;
 					return;
 				}
+
+
+
 			}
 		}
+	
 	}
 }
 
@@ -795,24 +800,21 @@ void Gbest_stock_selection()
 {
 	for (int j = 0; j < experiment_time; j++)
 	{
-		for (int t = 0; t < generation; t++)
+		
+		for (int i = 0; i < partical_num; i++)
 		{
-			for (int i = 0; i < partical_num; i++)
+			for (int s = 0; s < s_stock_index; s++)
 			{
-				for (int s = 0; s < s_stock_index; s++)
+				final_portfolio[s] = 0;
+				if (real_partical[best_experimrentime - 1][Gbest_i][s] == 1)
 				{
-
-					if (real_partical[best_experimrentime - 1][best_generation - 1][s] == 1)
-					{
-						//final_portfolio[s] = 0;
-						final_portfolio[s] = stock_no[s];//Gbest投資組合中
-						train_stock_index[s] = s;
-					}
-
-					else final_portfolio[s] = 0;
+					final_portfolio[s] = stock_no[s];//Gbest投資組合中
+					train_stock_index[s] = s;
+					
 				}
-				//return;
+				
 			}
+				return;
 		}
 	}
 }
@@ -851,7 +853,7 @@ void out_file(int a)
 		output_file << "Stock#" << ",";
 		for (int s = 0; s < s_stock_index; s++)
 		{
-			if (final_portfolio[s] != 0)
+			if (final_portfolio[s] == stock_no[s])
 			{
 				output_file << final_portfolio[s] << "(" << s << ")" << ",";
 			}
@@ -893,7 +895,7 @@ void test_out_file(int a)
 {
 	if (test_trend_ratio != 0)
 	{
-		string ouput_file = "Larry_result_" + M2M_test[a].substr(0, M2M_test[a].length());//輸出檔案名稱
+		string ouput_file = "Larry_result_" + H2M_test[a].substr(0, H2M_test[a].length());//輸出檔案名稱
 		output_file.open(ouput_file, ios::app);//檔案輸出
 		output_file << "代數" << "," << generation << endl;//v
 		output_file << "粒子數" << "," << partical_num << endl;//v
@@ -998,9 +1000,9 @@ void test_out_file(int a)
 
 void all_testperiod_final_result()
 {
-	string ouput_file = "Larry_ H2M_total_test_result.csv";//輸出檔案名稱
+	string ouput_file = "Larry_ H#_total_test_result.csv";//輸出檔案名稱
 	output_file.open(ouput_file, ios::app);//檔案輸出
-	output_file << "測試期區間" << "," << "test_2010_01(2009 Q1).csv - test_2017_12(2017 Q1).csv" << endl;
+	output_file << "測試期區間" << "," << "test_2010_Q1-Q2(2009 Q1).csv - test_2017_Q3-Q4(2016 Q1).csv" << endl;
 	output_file << "世代數" << "," << generation << endl;
 	output_file << "旋轉角度" << "," << theta << endl;
 	output_file << "粒子數" << "," << partical_num << endl;
@@ -1068,8 +1070,8 @@ int main()
 					standardization();
 					fitness();
 					compare();
-					
-					if (j == 0)
+
+					/*if (j == 0)
 					{
 						for (int s = 0; s < s_stock_index; s++)
 						{
@@ -1077,7 +1079,7 @@ int main()
 							full_all_max_solution[t][s] = all_max_solution[s];
 							full_all_min_solution[t][s] = partical[min_fitness_tmp][s];
 						}
-						
+
 						string ouput_file = "Larry_H2M_train_2017_02-07_solution_output.csv";//輸出檔案名稱
 						output_file.open(ouput_file, ios::app);//檔案輸出
 						output_file << "Gen" << "," << t + 1 << endl;
@@ -1094,8 +1096,8 @@ int main()
 						}
 						output_file << endl;
 						output_file.close();//解輸出
-					}
-					
+					}*/
+
 					for (int i = 0; i < partical_num; i++)
 					{
 						real_all_trend_ratio[j][t][i] = all_trend_ratio[i];
@@ -1106,9 +1108,7 @@ int main()
 
 						for (int s = 0; s < s_stock_index; s++)
 						{
-							real_partical[j][t][s] = 0;
-							real_partical[j][t][s] = all_max_solution[s];//Think
-
+							real_partical[j][i][s] = partical[i][s];//Think
 						}
 
 						for (int k = 0; k < n[i]; k++)
@@ -1125,14 +1125,13 @@ int main()
 
 					}
 				}
-				all_max_tmp[j] = all_max;//將每次實驗找到的Gbest放入陣列中	
-
+				all_max_tmp[j] = all_max;//將每次實驗找到的Gbest放入陣列中				
 			}
 			experiment_compre();
 			Gbest_num_find();
 			generation_compare();
 			//beta_output();//beta輸出
-			system("pause");
+			//system("pause");
 			Gbest_stock_selection();
 			for (int s = 0; s < s_stock_index; s++)
 			{
@@ -1162,12 +1161,12 @@ int main()
 			test_fitness();
 			all_test_return();//總體測試期預期報酬計算
 			test_out_file(a);//測試期檔案輸出
-			system("pause");
-		}
+			//system("pause");
 
+		}
 	}
 	all_test_risk();//總體測試期風險計算
 	all_testperiod_final_result();//總體測試期結果輸出
+	system("pause");
 	return 0;
-
 }
