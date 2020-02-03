@@ -319,7 +319,7 @@ void test_read_file(int a) {
 				stringstream test_num;
 				test_num << test_tmp;
 				test_num >> test_stock_no[test_stock_index];//編號
-															//cout << test_stock_no[test_stock_index] << endl;
+				//cout << test_stock_no[test_stock_index] << endl;
 				test_stock_index++;
 			}
 			test_index++;
@@ -633,9 +633,9 @@ void fitness()
 		 }*/
 		trend_ratio = m[i] / risk[i];
 		all_trend_ratio[i] = trend_ratio;
-		cout << all_trend_ratio[i] << endl;
+		//cout << all_trend_ratio[i] << endl;
 	}
-	system("pause");
+	//system("pause");
 }
 
 void compare()
@@ -1000,9 +1000,9 @@ void test_out_file(int a)
 
 void all_testperiod_final_result()
 {
-	string ouput_file = "Larry_ H#_total_test_result.csv";//輸出檔案名稱
+	string ouput_file = "Larry_ H2M_total_test_result.csv";//輸出檔案名稱
 	output_file.open(ouput_file, ios::app);//檔案輸出
-	output_file << "測試期區間" << "," << "test_2010_Q1-Q2(2009 Q1).csv - test_2017_Q3-Q4(2016 Q1).csv" << endl;
+	output_file << "測試期區間" << "," << "test_2010_01(2009 Q1).csv - test_2017_12(2017 Q1).csv" << endl;
 	output_file << "世代數" << "," << generation << endl;
 	output_file << "旋轉角度" << "," << theta << endl;
 	output_file << "粒子數" << "," << partical_num << endl;
@@ -1056,9 +1056,10 @@ int main()
 	srand(114);
 	for (int a = 0; a < file_num; a++)
 	{
-		if (a == 91)
-		{
+		
 			read_file(a);
+			if (a == 91)
+			{
 			for (int j = 0; j < experiment_time; j++)
 			{
 				index = 0;
@@ -1162,7 +1163,6 @@ int main()
 			all_test_return();//總體測試期預期報酬計算
 			test_out_file(a);//測試期檔案輸出
 			//system("pause");
-
 		}
 	}
 	all_test_risk();//總體測試期風險計算
