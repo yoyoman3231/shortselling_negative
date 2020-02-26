@@ -1,4 +1,4 @@
-/*融券負水位最終確認,算是寫法正確,結果也正確*/
+/*融券負水位最終確認,算式寫法與江江學姊對齊,結果也正確*/
 #include <iostream>
 #include <fstream>
 #include <sstream>
